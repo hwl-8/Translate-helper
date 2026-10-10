@@ -1,0 +1,2376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>六级词汇复习词库</title>
+
+    <style>
+        /* ==============================
+           全局
+           ============================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f6f8;
+            color: #333;
+            font-family:
+                "Segoe UI",
+                "Microsoft YaHei",
+                Arial,
+                sans-serif;
+        }
+
+
+        /* ==============================
+           顶部标题
+           ============================== */
+
+        .header {
+            background: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 30px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #888;
+        }
+
+        .daily-score {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            min-width: 150px;
+            padding: 9px 12px;
+            border: 1px solid #d9e2e8;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #52616b;
+            font-size: 13px;
+            text-align: right;
+        }
+
+        .daily-score strong {
+            display: block;
+            margin-top: 2px;
+            color: #2c3e50;
+            font-size: 22px;
+            line-height: 1.1;
+        }
+
+        .daily-score small {
+            display: block;
+            margin-top: 3px;
+            color: #8997a1;
+        }
+
+
+        /* ==============================
+           搜索区域
+           ============================== */
+
+        .toolbar {
+            max-width: 1100px;
+            margin: 25px auto 10px;
+            padding: 0 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 13px 16px;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            background: white;
+
+            font-size: 16px;
+
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #999;
+        }
+
+
+        /* ==============================
+           单词卡区域
+           ============================== */
+
+        .word-list {
+            max-width: 1100px;
+            margin: 20px auto;
+
+            padding: 0 20px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fill,
+                    minmax(320px, 1fr)
+                );
+
+            gap: 20px;
+        }
+
+
+        /* ==============================
+           单词卡
+           ============================== */
+
+        .word-card {
+            border: 1px solid #ddd;
+
+            border-radius: 12px;
+
+            padding: 16px;
+
+            background: white;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.05);
+
+            transition:
+                transform 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .word-card:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* ==============================
+           单词标题
+           ============================== */
+
+        .word-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: baseline;
+        }
+
+        .word-header h2 {
+            margin: 0;
+
+            font-size: 1.5em;
+
+            color: #2c3e50;
+        }
+
+        .level {
+            font-size: 0.8em;
+
+            color: #7f8c8d;
+        }
+
+
+        /* ==============================
+           单词信息
+           ============================== */
+
+        .pronunciation {
+            margin: 6px 0;
+
+            color: #666;
+        }
+
+        .word-info {
+            margin: 6px 0;
+
+            color: #555;
+        }
+
+        .meaning {
+            margin: 6px 0;
+
+            color: #555;
+
+            line-height: 1.5;
+        }
+
+        .english-meaning {
+            margin: 6px 0;
+
+            color: #4f6472;
+
+            line-height: 1.5;
+        }
+
+        .example {
+            margin: 10px 0;
+
+            color: #333;
+
+            line-height: 1.6;
+        }
+
+        .translation {
+            margin: 6px 0;
+
+            color: #777;
+
+            line-height: 1.5;
+        }
+
+
+        /* ==============================
+           复习与错题计数
+           ============================== */
+
+        .card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 14px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .review-button,
+        .quiz-done-button,
+        .quiz-again-button,
+        .quiz-skip-button {
+            padding: 8px 14px;
+            border: 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .review-button,
+        .quiz-done-button,
+        .quiz-again-button {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .review-button:hover,
+        .quiz-done-button:hover,
+        .quiz-again-button:hover {
+            background: #1f2d3a;
+        }
+
+        .review-stat,
+        .mistake-stat {
+            color: #666;
+        }
+
+        .review-count {
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .mistake-stat,
+        .mistake-count {
+            color: #7b1e1e;
+        }
+
+        .mistake-count {
+            font-weight: 700;
+        }
+
+
+        /* ==============================
+           顶部蒙版自测
+           ============================== */
+
+        body.quiz-open {
+            overflow: hidden;
+        }
+
+        .quiz-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px 16px;
+            background: rgba(44, 62, 80, 0.58);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            overflow-y: auto;
+        }
+
+        .quiz-overlay.is-hidden {
+            display: none;
+        }
+
+        .quiz-panel {
+            width: min(720px, 100%);
+            margin-top: 8px;
+            padding: 24px;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-panel h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .quiz-intro,
+        .quiz-status {
+            color: #777;
+        }
+
+        .quiz-question {
+            margin-top: 18px;
+            padding: 16px;
+            border: 1px solid #e3e6e8;
+            border-radius: 10px;
+            background: #fafbfc;
+        }
+
+        .quiz-question h3 {
+            margin: 0 0 8px;
+            color: #2c3e50;
+            font-size: 17px;
+        }
+
+        .quiz-prompt-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .quiz-prompt {
+            flex: 1;
+            margin: 0;
+            color: #555;
+        }
+
+        .quiz-help-button {
+            flex: 0 0 auto;
+            padding: 6px 10px;
+            border: 1px solid #d9b5b5;
+            border-radius: 7px;
+            background: #fff8f8;
+            color: #7b1e1e;
+            cursor: pointer;
+            font: inherit;
+            white-space: nowrap;
+        }
+
+        .quiz-help-button:hover:not(:disabled) {
+            background: #fbeeee;
+        }
+
+        .quiz-help-button:disabled {
+            cursor: default;
+            opacity: 0.75;
+        }
+
+        .quiz-sentence {
+            margin: 10px 0 12px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .quiz-highlight {
+            padding: 1px 3px;
+            border-radius: 3px;
+            background: #dff1ff;
+            color: #245b7a;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 8px;
+        }
+
+        .quiz-option {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d8dde1;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            font: inherit;
+            text-align: left;
+        }
+
+        .quiz-option:hover:not(:disabled) {
+            border-color: #7f8c8d;
+            background: #f5f6f8;
+        }
+
+        .quiz-option:disabled {
+            cursor: default;
+        }
+
+        .quiz-option.correct {
+            border-color: #4f8a61;
+            background: #edf7ef;
+            color: #28603a;
+        }
+
+        .quiz-option.wrong {
+            border-color: #a64242;
+            background: #fbeeee;
+            color: #7b1e1e;
+        }
+
+        .quiz-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .quiz-skip-button {
+            border: 1px solid #d8dde1;
+            background: white;
+            color: #666;
+        }
+
+        .quiz-done-button[hidden] {
+            display: none;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .daily-score {
+                position: static;
+                width: fit-content;
+                margin: 16px auto 0;
+                text-align: center;
+            }
+
+            .quiz-panel {
+                padding: 18px;
+            }
+
+            .quiz-prompt-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .card-actions {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+        }
+
+
+        /* ==============================
+           页脚
+           ============================== */
+
+        .footer {
+            padding: 30px;
+
+            text-align: center;
+
+            color: #999;
+
+            font-size: 14px;
+        }
+
+
+        /* ==============================
+           手机适配
+           ============================== */
+
+        @media (max-width: 600px) {
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .toolbar {
+                padding: 0 12px;
+            }
+
+            .word-list {
+                padding: 0 12px;
+
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+    <link rel="stylesheet" href="reading.css">
+    <link rel="stylesheet" href="translation.css">
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     页面标题
+     ===================================================== -->
+
+<header class="header">
+    <div class="reading-launcher">
+        <button id="readingTrigger" class="reading-trigger" type="button" aria-expanded="false" aria-controls="readingLevels">精选短文</button>
+        <div id="readingLevels" class="reading-levels" hidden aria-label="选择阅读时长">
+            <button type="button" data-minutes="5">5min</button>
+            <button type="button" data-minutes="20">20min</button>
+            <button type="button" data-minutes="45">45min</button>
+        </div>
+    </div>
+
+    <h1>
+        六级词汇复习词库
+    </h1>
+
+    <p>
+        CET-6 Vocabulary Review
+    </p>
+
+    <div class="daily-score" aria-live="polite">
+        <span>今日测试得分</span>
+        <strong id="dailyScore">0</strong>
+        <small id="dailyScoreDetails">已完成 0 题</small>
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     每次打开页面时显示的三题自测蒙版
+     ===================================================== -->
+
+<section
+    id="quizOverlay"
+    class="quiz-overlay"
+    aria-label="每日三题自测"
+>
+
+    <div class="quiz-panel">
+
+        <h2>今日三题自测</h2>
+
+        <p class="quiz-intro">
+            请选择每个单词对应的正确释义。答错后，该单词卡的暗红色答错次数会加一。
+        </p>
+
+        <div id="quizQuestions"></div>
+
+        <div class="quiz-actions">
+            <span id="quizStatus" class="quiz-status">请完成全部题目后关闭自测。</span>
+            <button id="quizAgainButton" class="quiz-again-button" type="button" hidden>
+                再来！
+            </button>
+            <button id="quizDoneButton" class="quiz-done-button" type="button" hidden>
+                完成自测
+            </button>
+            <button id="quizSkipButton" class="quiz-skip-button" type="button">
+                跳过本次
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     搜索框
+     ===================================================== -->
+
+<div class="toolbar">
+
+    <input
+        type="text"
+        id="searchInput"
+        class="search-box"
+        placeholder="搜索单词..."
+    >
+    <button id="translationTrigger" class="translation-trigger" type="button">双语翻译 ↗</button>
+
+</div>
+
+
+<!-- =====================================================
+     ★★★★★ 单词卡区域 ★★★★★
+
+     以后新增单词，就复制下面的 word-card。
+
+     不需要修改其他地方。
+
+     ===================================================== -->
+
+<main
+    class="word-list"
+    id="wordList"
+>
+
+
+    <!-- =================================================
+         单词卡开始
+         ================================================= -->
+
+    <div class="word-card">
+
+        <div class="word-header">
+
+            <h2>
+                inductive
+            </h2>
+
+            <span class="level">
+                六级
+            </span>
+
+        </div>
+
+
+        <p class="pronunciation">
+            英 /ɪnˈdʌktɪv/
+            美 /ɪnˈdʌktɪv/
+        </p>
+
+
+        <p class="word-info">
+            <strong>词性：</strong>
+            形容词
+        </p>
+
+
+        <p class="meaning">
+            <strong>释义：</strong>
+            归纳的；感应的；引导的
+        </p>
+
+        <p class="english-meaning">
+            <strong>英文解释：</strong>
+            based on particular facts or examples to form a general rule
+        </p>
+
+
+        <p class="example">
+
+            <strong>例句：</strong>
+
+            The scientist used
+            <strong>inductive</strong>
+            reasoning to formulate a hypothesis
+            after observing repeated patterns
+            in the experiment.
+
+        </p>
+
+
+        <p class="translation">
+
+            中文：
+
+            科学家在观察到实验中的重复模式后，
+            运用归纳推理来构建一个假说。
+
+        </p>
+
+    </div>
+
+    <!-- =================================================
+         单词卡结束
+         ================================================= -->
+
+
+
+    <!-- =================================================
+         第二个单词示例
+         ================================================= -->
+
+    <div class="word-card">
+
+        <div class="word-header">
+
+            <h2>
+                abundant
+            </h2>
+
+            <span class="level">
+                六级
+            </span>
+
+        </div>
+
+
+        <p class="pronunciation">
+            英 /əˈbʌndənt/
+            美 /əˈbʌndənt/
+        </p>
+
+
+        <p class="word-info">
+
+            <strong>词性：</strong>
+            形容词
+
+        </p>
+
+
+        <p class="meaning">
+
+            <strong>释义：</strong>
+            大量的；丰富的；充足的
+
+        </p>
+
+        <p class="english-meaning">
+            <strong>英文解释：</strong>
+            existing in large quantities; more than enough
+        </p>
+
+
+        <p class="example">
+
+            <strong>例句：</strong>
+
+            The region is
+            <strong>abundant</strong>
+            in natural resources.
+
+        </p>
+
+
+        <p class="translation">
+
+            中文：
+
+            这个地区拥有丰富的自然资源。
+
+        </p>
+
+    </div>
+
+    <!-- =================================================
+         第二个单词结束
+         ================================================= -->
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>obligation</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /ˌɒblɪˈɡeɪʃn/ 美 /ˌɑːblɪˈɡeɪʃn/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        名词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        义务；责任；债务；人情债
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        a duty to do something because of a law, promise, or moral reason
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        Citizens have an obligation to obey the law and pay their taxes.
+    </p>
+
+    <p class="translation">
+        中文：公民有义务遵守法律并缴纳税款。
+    </p>
+
+</div>
+
+
+<!-- =================================================
+     从 Codex Reset 时间线提取的重点词汇
+     ================================================= -->
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>cadence</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /ˈkeɪdəns/ 美 /ˈkeɪdəns/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        名词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        节奏；韵律；（事件发生的）频率或节律
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        the regular rhythm or pattern in which something happens
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        The cadence of verified resets has varied from week to week.
+    </p>
+
+    <p class="translation">
+        中文：经核实的重置事件的发生节律每周都不尽相同。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>median</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /ˈmiːdiən/ 美 /ˈmiːdiən/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        名词；形容词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        中位数；中间值；中间的
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        the middle value in a set of numbers arranged in order
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        The median gap between resets was 4.2 days.
+    </p>
+
+    <p class="translation">
+        中文：重置事件之间的间隔中位数为 4.2 天。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>milestone</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /ˈmaɪləstəʊn/ 美 /ˈmaɪlstoʊn/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        名词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        里程碑；重要阶段；重大事件
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        an important event or stage in the development of something
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        Reaching a new user milestone can trigger a promotional reset.
+    </p>
+
+    <p class="translation">
+        中文：达到新的用户里程碑可能会触发一次促销性重置。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>consecutive</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /kənˈsekjətɪv/ 美 /kənˈsekjətɪv/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        形容词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        连续的；相邻的；接连发生的
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        following one after another without interruption
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        Three consecutive announcements appeared in the timeline.
+    </p>
+
+    <p class="translation">
+        中文：时间线上连续出现了三次公告。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>redemption</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /rɪˈdempʃn/ 美 /rɪˈdempʃn/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        名词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        兑换；赎回；挽回或补救
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        the act of exchanging something for money or a benefit; the act of saving or recovering something
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        The banked credit is available for redemption on demand.
+    </p>
+
+    <p class="translation">
+        中文：存入账户的额度可以按需兑换使用。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>propagate</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /ˈprɒpəɡeɪt/ 美 /ˈprɑːpəɡeɪt/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        动词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        传播；传递；繁殖
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        to spread an idea, signal, or effect from one place or person to another
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        The reset may take several minutes to propagate to every account.
+    </p>
+
+    <p class="translation">
+        中文：重置可能需要几分钟才能传递到每个账户。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>compensation</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /ˌkɒmpenˈseɪʃn/ 美 /ˌkɑːmpənˈseɪʃn/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        名词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        补偿；赔偿；补偿金
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        something, especially money, given to make up for loss, injury, or work
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        The company offered compensation after the service disruption.
+    </p>
+
+    <p class="translation">
+        中文：服务中断后，公司提供了补偿。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>mitigate</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /ˈmɪtɪɡeɪt/ 美 /ˈmɪtəɡeɪt/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        动词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        减轻；缓和；使危害或影响变小
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        to make something less harmful, serious, or painful
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        The team introduced safeguards to mitigate the impact of the incident.
+    </p>
+
+    <p class="translation">
+        中文：团队采取了保护措施，以减轻这起事件的影响。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>underlying</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /ˌʌndəˈlaɪɪŋ/ 美 /ˌʌndərˈlaɪɪŋ/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        形容词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        根本的；潜在的；底层的
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        existing beneath the surface; basic or hidden but important
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        The team continued investigating the underlying cause of the outage.
+    </p>
+
+    <p class="translation">
+        中文：团队继续调查服务中断的根本原因。
+    </p>
+
+</div>
+
+
+<div class="word-card">
+
+    <div class="word-header">
+        <h2>disruption</h2>
+        <span class="level">六级</span>
+    </div>
+
+    <p class="pronunciation">
+        英 /dɪsˈrʌpʃn/ 美 /dɪsˈrʌpʃn/
+    </p>
+
+    <p class="word-info">
+        <strong>词性：</strong>
+        名词
+    </p>
+
+    <p class="meaning">
+        <strong>释义：</strong>
+        中断；扰乱；混乱
+    </p>
+
+    <p class="english-meaning">
+        <strong>英文解释：</strong>
+        a situation in which a service or activity is interrupted
+    </p>
+
+    <p class="example">
+        <strong>例句：</strong>
+        A brief service disruption affected some users.
+    </p>
+
+    <p class="translation">
+        中文：一次短暂的服务中断影响了部分用户。
+    </p>
+
+</div>
+
+<!-- 补齐清单中已有的词条；英文解释为学习用改写，例句为自编。
+     主释义用于自测，其他常见义项单独列出，避免 capacity/capability 同义干扰。 -->
+<div class="word-card">
+    <div class="word-header">
+        <h2>capacity</h2>
+        <span class="level">四六级学习词汇</span>
+    </div>
+    <p class="pronunciation">英 /kəˈpæsəti/ 美 /kəˈpæsət̬i/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>容量；容纳量（某物最多能容纳的数量）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>the largest quantity that a container or space can hold</p>
+    <p class="translation"><strong>其他常见义项：</strong><br>
+        能力：the power to learn or carry out a task（学习或执行任务的能力）；<br>
+        身份；职务：the role in which someone acts（某人行事时所处的角色）。
+    </p>
+    <p class="example"><strong>例句：</strong>The new lecture hall has a seating capacity of two hundred people.</p>
+    <p class="translation">中文：新报告厅可容纳两百人就座。</p>
+    <p class="translation">释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/capacity">Cambridge Dictionary</a>；英文为学习用改写，例句自编。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header">
+        <h2>capability</h2>
+        <span class="level">四六级学习词汇</span>
+    </div>
+    <p class="pronunciation">英 /ˌkeɪpəˈbɪləti/ 美 /ˌkeɪpəˈbɪlət̬i/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>能力；才能（完成某项任务的本领）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>the skill or power needed to carry out a task successfully</p>
+    <p class="translation"><strong>其他常见义项：</strong><br>
+        军事实力：the forces and equipment available for fighting（可用于作战的兵力和装备）。
+    </p>
+    <p class="example"><strong>例句：</strong>The rescue team has the capability to reach people trapped in the mountains.</p>
+    <p class="translation">中文：救援队有能力到达山区被困人员所在的位置。</p>
+    <p class="translation">释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/capability">Cambridge Dictionary</a>；英文为学习用改写，例句自编。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header">
+        <h2>perception</h2>
+        <span class="level">四六级学习词汇</span>
+    </div>
+    <p class="pronunciation">英 /pəˈsepʃən/ 美 /pɚˈsepʃən/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>看法；认识（对某事物的理解方式）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>a person's view of something, shaped by how they understand it</p>
+    <p class="translation"><strong>其他常见义项：</strong><br>
+        感知；知觉：awareness gained through the senses（通过感官获得的觉察）；<br>
+        洞察力：skill in noticing and understanding what is not obvious（察觉并理解不明显事物的能力）。
+    </p>
+    <p class="example"><strong>例句：</strong>Working on a farm changed her perception of how food is produced.</p>
+    <p class="translation">中文：在农场工作改变了她对食物生产过程的认识。</p>
+    <p class="translation">释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/perception">Cambridge Dictionary</a>；英文为学习用改写，例句自编。</p>
+</div>
+
+<!-- Docker Desktop 阅读词汇：释义为学习用改写，例句自编；考试级别未核定。 -->
+<div class="word-card">
+    <div class="word-header"><h2>complex</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /ˈkɒm.pleks/ 美 /kɑːmˈpleks/</p>
+    <p class="word-info"><strong>词性：</strong>形容词</p>
+    <p class="meaning"><strong>释义：</strong>复杂的（包含许多相互关联的部分，难以理解或处理）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>having many connected parts that make something hard to understand or manage</p>
+    <p class="example"><strong>例句：</strong>The guide explains a complex setup process in simple steps.</p>
+    <p class="translation">中文：这份指南用简单的步骤解释了一个复杂的配置过程。</p>
+    <p class="translation"><strong>其他义项：</strong>名词：建筑群 — a group of buildings used for related purposes（用于相关用途的一组建筑）；情结 — a persistent set of worries about oneself（对自身持续存在的一组忧虑）。</p>
+    <p class="translation">释义及读音参考：<a href="https://dictionary.cambridge.org/dictionary/english/complex">Cambridge Dictionary</a>；释义为学习用改写，例句自编。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>integrate</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /ˈɪn.tɪ.ɡreɪt/ 美 /ˈɪn.t̬ə.ɡreɪt/</p>
+    <p class="word-info"><strong>词性：</strong>动词</p>
+    <p class="meaning"><strong>释义：</strong>整合；使结合为一个整体</p>
+    <p class="english-meaning"><strong>英文解释：</strong>to join separate parts into one working system or whole</p>
+    <p class="example"><strong>例句：</strong>We plan to integrate the new tool with our existing software.</p>
+    <p class="translation">中文：我们计划把新工具与现有软件整合起来。</p>
+    <p class="translation"><strong>其他义项：</strong>融入群体 — to become part of a community（成为某个群体的一员）。搭配：integrate A with B；integrate A into B。</p>
+    <p class="translation">释义参考：<a href="https://www.dictionary.com/browse/integrate">Dictionary.com</a>；读音参考：<a href="https://dictionary.cambridge.org/dictionary/english/integrate">Cambridge Dictionary</a>；释义为学习用改写，例句自编。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>vast</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /vɑːst/ 美 /væst/</p>
+    <p class="word-info"><strong>词性：</strong>形容词</p>
+    <p class="meaning"><strong>释义：</strong>广阔的；范围极大的</p>
+    <p class="english-meaning"><strong>英文解释：</strong>extremely large in area or extent</p>
+    <p class="example"><strong>例句：</strong>A vast desert stretches beyond the town.</p>
+    <p class="translation">中文：城镇外延伸着一片广阔的沙漠。</p>
+    <p class="translation"><strong>其他用法：</strong>数量巨大的 — extremely large in quantity（数量极大）；the vast majority 表示“绝大多数”。原文 vast ecosystem 指“庞大的生态系统”。</p>
+    <p class="translation">释义及读音参考：<a href="https://dictionary.cambridge.org/dictionary/english/vast">Cambridge Dictionary</a>；释义为学习用改写，例句自编。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>accelerate</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /əkˈsel.ə.reɪt/ 美 /ekˈsel.ɚ.eɪt/</p>
+    <p class="word-info"><strong>词性：</strong>动词</p>
+    <p class="meaning"><strong>释义：</strong>加快；促进某个过程更快进行</p>
+    <p class="english-meaning"><strong>英文解释：</strong>to make a process happen or progress more quickly</p>
+    <p class="example"><strong>例句：</strong>Better tools can accelerate the development of new applications.</p>
+    <p class="translation">中文：更好的工具能够加快新应用的开发。</p>
+    <p class="translation"><strong>其他义项：</strong>加速行驶或运动 — to begin moving faster（开始以更快的速度移动）。派生词：acceleration（加速）。</p>
+    <p class="translation">释义及读音参考：<a href="https://dictionary.cambridge.org/dictionary/english/accelerate">Cambridge Dictionary</a>；释义为学习用改写，例句自编。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>collaborate</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /kəˈlæb.ə.reɪt/ 美 /kəˈlæb.ə.reɪt/</p>
+    <p class="word-info"><strong>词性：</strong>动词</p>
+    <p class="meaning"><strong>释义：</strong>合作；为共同目标一起工作</p>
+    <p class="english-meaning"><strong>英文解释：</strong>to work jointly with other people towards a shared goal</p>
+    <p class="example"><strong>例句：</strong>Students collaborate on a project using a shared repository.</p>
+    <p class="translation">中文：学生们使用共享代码仓库合作完成一个项目。</p>
+    <p class="translation"><strong>其他义项：</strong>与占领本国的敌人勾结（贬义）— to assist an enemy occupying one's country。搭配：collaborate with someone；collaborate on a project。</p>
+    <p class="translation">释义及读音参考：<a href="https://dictionary.cambridge.org/dictionary/english/collaborate">Cambridge Dictionary</a>；释义为学习用改写，例句自编。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>reliable</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /rɪˈlaɪ.ə.bəl/ 美 /rɪˈlaɪ.ə.bəl/</p>
+    <p class="word-info"><strong>词性：</strong>形容词</p>
+    <p class="meaning"><strong>释义：</strong>可靠的（能够持续正常工作）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>able to keep working properly and consistently without failing</p>
+    <p class="example"><strong>例句：</strong>A reliable system keeps working even during busy periods.</p>
+    <p class="translation">中文：可靠的系统即使在繁忙时段也能持续正常工作。</p>
+    <p class="translation"><strong>其他用法：</strong>人可信赖的 — able to be trusted to keep promises（可以信赖其履行承诺）；信息可信的 — likely to be accurate and trustworthy（很可能准确且值得信任）。派生词：reliability（可靠性）。</p>
+    <p class="translation">释义及读音参考：<a href="https://dictionary.cambridge.org/dictionary/english/reliable">Cambridge Dictionary</a>；释义为学习用改写，例句自编。</p>
+</div>
+
+<!-- BERT 综述阅读词汇：2026-09-13；按原词形归一化收录。 -->
+<div class="word-card">
+    <div class="word-header"><h2>comprehensive</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /ˌkɒm.prɪˈhen.sɪv/ 美 /ˌkɑːm.prəˈhen.sɪv/</p>
+    <p class="word-info"><strong>词性：</strong>形容词</p>
+    <p class="meaning"><strong>释义：</strong>全面的；综合的（涵盖所需的各个方面）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>covering all the important parts of a subject</p>
+    <p class="example"><strong>例句：</strong>The paper provides a comprehensive account of the model's strengths and weaknesses.</p>
+    <p class="translation">中文：这篇论文全面介绍了该模型的优势与不足。</p>
+    <p class="translation">其他用法：comprehensive insurance 指综合保险，insurance covering a wide range of risks（承保多种风险的保险）。</p>
+    <p class="translation">材料：BERT 综述，第 1 页。释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/comprehensive">Cambridge Dictionary</a>；英文为学习用改写，例句自编；考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>criterion</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /kraɪˈtɪə.ri.ən/ 美 /kraɪˈtɪr.i.ən/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>标准；准则（用于判断或选择的依据）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>a rule or standard used to assess something or make a choice</p>
+    <p class="example"><strong>例句：</strong>Accuracy is one criterion for comparing the two models.</p>
+    <p class="translation">中文：准确率是比较这两个模型的一项标准。</p>
+    <p class="translation">复数为 criteria（多个判断标准，standards used for assessment）；原文 criteria used to decide 指“用于作出决定的标准”。</p>
+    <p class="translation">材料：BERT 综述，第 1 页。释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/criterion">Cambridge Dictionary</a>；英文为学习用改写，例句自编；考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>exclude</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /ɪkˈskluːd/ 美 /ɪkˈskluːd/</p>
+    <p class="word-info"><strong>词性：</strong>动词</p>
+    <p class="meaning"><strong>释义：</strong>排除；不把某项内容纳入其中</p>
+    <p class="english-meaning"><strong>英文解释：</strong>to leave someone or something out of a group or selection</p>
+    <p class="example"><strong>例句：</strong>The researchers exclude duplicate records from the analysis.</p>
+    <p class="translation">中文：研究人员将重复记录排除在分析之外。</p>
+    <p class="translation">其他义项：阻止参与 — to prevent someone from joining an activity（不让某人参加活动）；排除可能性 — to rule out a possible explanation（否定某种可能的解释）。搭配：exclude A from B。</p>
+    <p class="translation">材料：BERT 综述，第 1 页。释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/exclude">Cambridge Dictionary</a>；英文为学习用改写，例句自编；考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>objective</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /əbˈdʒek.tɪv/ 美 /əbˈdʒek.tɪv/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>目标；目的（计划实现的结果）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>a result that a person or project is working to achieve</p>
+    <p class="example"><strong>例句：</strong>The main objective of the study is to compare language models.</p>
+    <p class="translation">中文：这项研究的主要目标是比较语言模型。</p>
+    <p class="translation">其他词性：形容词，客观的 — based on facts rather than personal feelings（依据事实而非个人感受的）。原文 The objective is to... 中为名词。</p>
+    <p class="translation">材料：BERT 综述，第 1 页。释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/objective">Cambridge Dictionary</a>；英文为学习用改写，例句自编；考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>substantial</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /səbˈstæn.ʃəl/ 美 /səbˈstæn.ʃəl/</p>
+    <p class="word-info"><strong>词性：</strong>形容词</p>
+    <p class="meaning"><strong>释义：</strong>相当大的；大量的（数量或程度显著）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>large enough in amount or degree to be important</p>
+    <p class="example"><strong>例句：</strong>Training the larger model requires substantial computing resources.</p>
+    <p class="translation">中文：训练较大的模型需要大量计算资源。</p>
+    <p class="translation">其他义项：结实的 — strongly built and solid（建造牢固且坚实的）；丰盛的 — large enough to satisfy hunger（分量足以充饥的，如 a substantial meal）。</p>
+    <p class="translation">材料：BERT 综述，第 2、35 页。释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/substantial">Cambridge Dictionary</a>；英文为学习用改写，例句自编；考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>constraint</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /kənˈstreɪnt/ 美 /kənˈstreɪnt/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>限制；约束（限制可做之事的条件）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>a condition that restricts the actions or choices available</p>
+    <p class="example"><strong>例句：</strong>Limited memory is a major constraint on running the model on a phone.</p>
+    <p class="translation">中文：内存有限是在手机上运行该模型的一项主要限制。</p>
+    <p class="translation">其他用法：克制；拘束 — restraint in expressing feelings or behaving freely（表达感受或自由行动时的约束）。搭配：a constraint on；budget constraints（预算限制）。</p>
+    <p class="translation">材料：BERT 综述，第 33、34 页。释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/constraint">Cambridge Dictionary</a>；英文为学习用改写，例句自编；考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>bias</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /ˈbaɪ.əs/ 美 /ˈbaɪ.əs/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>偏见；偏向（有失公允的倾向）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>an unfair tendency to favour or oppose a person, group, or idea</p>
+    <p class="example"><strong>例句：</strong>The team checks the training data for bias against particular groups.</p>
+    <p class="translation">中文：团队检查训练数据是否存在针对特定群体的偏见。</p>
+    <p class="translation">其他词性：动词，使产生偏见 — to influence a judgment unfairly（不公正地影响判断）。原文 biases 为复数；不要把 bias 与 biased（有偏见的）混用。</p>
+    <p class="translation">材料：BERT 综述，第 35 页。释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/bias">Cambridge Dictionary</a>；英文为学习用改写，例句自编；考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>versatile</h2><span class="level">阅读重点词汇</span></div>
+    <p class="pronunciation">英 /ˈvɜː.sə.taɪl/ 美 /ˈvɝː.sə.t̬əl/</p>
+    <p class="word-info"><strong>词性：</strong>形容词</p>
+    <p class="meaning"><strong>释义：</strong>多用途的；多功能的（可用于多种任务）</p>
+    <p class="english-meaning"><strong>英文解释：</strong>useful for many different tasks or purposes</p>
+    <p class="example"><strong>例句：</strong>A versatile model can support several language tasks.</p>
+    <p class="translation">中文：一个多功能模型可以支持多种语言任务。</p>
+    <p class="translation">用于人时：多才多艺的 — able to perform many different kinds of work（能够胜任多种工作）。派生词：versatility（多才多艺；多用途性）。</p>
+    <p class="translation">材料：BERT 综述，第 39 页。释义参考：<a href="https://dictionary.cambridge.org/dictionary/english/versatile">Cambridge Dictionary</a>；英文为学习用改写，例句自编；考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>evaporation</h2><span class="level">阅读错词</span></div>
+    <p class="pronunciation">英 /ɪˌvæp.əˈreɪ.ʃən/ 美 /ɪˌvæp.əˈreɪ.ʃən/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>蒸发；液态水变为水蒸气的过程</p>
+    <p class="english-meaning"><strong>英文解释：</strong>the process in which liquid water changes into water vapour</p>
+    <p class="example"><strong>例句：</strong>Evaporation slowly removes water from the open pond.</p>
+    <p class="translation">中文：蒸发使露天池塘里的水缓慢减少。</p>
+    <p class="translation">精选短文词义题错词。释义为学习用改写，例句自编；<a href="https://dictionary.cambridge.org/dictionary/english/evaporation">释义与读音参考</a>。考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>precipitation</h2><span class="level">阅读错词</span></div>
+    <p class="pronunciation">英 /prɪˌsɪp.ɪˈteɪ.ʃən/ 美 /prɪˌsɪp.əˈteɪ.ʃən/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>降水；从大气落到地面的雨雪等</p>
+    <p class="english-meaning"><strong>英文解释：</strong>water that falls from the atmosphere as rain, snow, or hail</p>
+    <p class="example"><strong>例句：</strong>Winter precipitation often falls as snow in these mountains.</p>
+    <p class="translation">中文：这些山地的冬季降水常以雪的形式落下。</p>
+    <p class="translation">精选短文词义题错词。释义为学习用改写，例句自编；<a href="https://dictionary.cambridge.org/dictionary/english/precipitation">释义与读音参考</a>。考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>fine-tuning</h2><span class="level">翻译学习词</span></div>
+    <p class="pronunciation">英 /ˌfaɪn ˈtjuːnɪŋ/ 美 /ˌfaɪn ˈtuːnɪŋ/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>微调</p>
+    <p class="english-meaning"><strong>英文解释：</strong>the process of further training a pre-trained model on a smaller task-specific dataset</p>
+    <p class="example"><strong>例句：</strong>Fine-tuning adapts the model to a specific classification task.</p>
+    <p class="translation">中文：微调使模型适应特定的分类任务。</p>
+    <p class="translation">翻译提取的 DeepSeek 模型学习草稿，经用户核对确认；非词典引文，例句自编。考试级别未核定。</p>
+</div>
+
+<div class="word-card">
+    <div class="word-header"><h2>baseline</h2><span class="level">翻译学习词</span></div>
+    <p class="pronunciation">英 /ˈbeɪslaɪn/ 美 /ˈbeɪslaɪn/</p>
+    <p class="word-info"><strong>词性：</strong>名词</p>
+    <p class="meaning"><strong>释义：</strong>基线，基准</p>
+    <p class="english-meaning"><strong>英文解释：</strong>a standard or reference point used for comparison</p>
+    <p class="example"><strong>例句：</strong>The new method was compared against a simple baseline.</p>
+    <p class="translation">中文：新方法与一个简单的基准进行了比较。</p>
+    <p class="translation">翻译提取的 DeepSeek 模型学习草稿，经用户核对确认；非词典引文，例句自编。考试级别未核定。</p>
+</div>
+
+</main>
+
+
+<!-- =====================================================
+     页脚
+     ===================================================== -->
+
+<footer class="footer">
+
+    CET-6 Vocabulary Review
+
+</footer>
+
+
+
+<!-- =====================================================
+     JavaScript
+     ===================================================== -->
+
+<script>
+
+    /*
+     * 复习记录
+     *
+     * 记录保存在浏览器本地，关闭页面后不会丢失。
+     */
+
+    const progressStorageKey =
+        "cet6VocabularyProgress";
+
+    const dailyScoreStorageKey =
+        "cet6VocabularyDailyScores";
+
+    let progress = {};
+    let dailyScores = {};
+
+    try {
+        progress = JSON.parse(
+            localStorage.getItem(progressStorageKey) || "{}"
+        );
+    } catch (error) {
+        progress = {};
+    }
+
+    try {
+        dailyScores = JSON.parse(
+            localStorage.getItem(dailyScoreStorageKey) || "{}"
+        );
+    } catch (error) {
+        dailyScores = {};
+    }
+
+
+    function saveProgress() {
+
+        try {
+            localStorage.setItem(
+                progressStorageKey,
+                JSON.stringify(progress)
+            );
+        } catch (error) {
+            // 某些浏览器限制本地存储时，页面仍可正常使用。
+        }
+
+    }
+
+
+    function saveDailyScores() {
+
+        try {
+            localStorage.setItem(
+                dailyScoreStorageKey,
+                JSON.stringify(dailyScores)
+            );
+        } catch (error) {
+            // 某些浏览器限制本地存储时，页面仍可正常使用。
+        }
+
+    }
+
+
+    function getTodayKey() {
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+
+        return year + "-" + month + "-" + day;
+
+    }
+
+
+    function getTodayScoreRecord() {
+
+        const todayKey = getTodayKey();
+
+        if (!dailyScores[todayKey] ||
+            typeof dailyScores[todayKey] !== "object") {
+            dailyScores[todayKey] = {
+                score: 0,
+                questions: 0
+            };
+        }
+
+        dailyScores[todayKey].score =
+            Number(dailyScores[todayKey].score) || 0;
+
+        dailyScores[todayKey].questions =
+            Number(dailyScores[todayKey].questions) || 0;
+
+        return dailyScores[todayKey];
+
+    }
+
+
+    function updateDailyScoreDisplay() {
+
+        const record = getTodayScoreRecord();
+        const dailyScore = document.getElementById("dailyScore");
+        const dailyScoreDetails =
+            document.getElementById("dailyScoreDetails");
+
+        if (dailyScore) {
+            dailyScore.textContent = record.score;
+        }
+
+        if (dailyScoreDetails) {
+            dailyScoreDetails.textContent =
+                "已完成 " + record.questions + " 题";
+        }
+
+    }
+
+
+    function recordDailyScore(score, questionCount) {
+
+        const record = getTodayScoreRecord();
+        record.score += score;
+        record.questions += questionCount;
+        saveDailyScores();
+        updateDailyScoreDisplay();
+
+        return record;
+
+    }
+
+
+    function getWord(card) {
+
+        return card.querySelector("h2")
+            .textContent
+            .replace(/\s+/g, " ")
+            .trim()
+            .toLowerCase();
+
+    }
+
+
+    function getMeaning(card) {
+
+        return card.querySelector(".meaning")
+            .textContent
+            .replace("释义：", "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+    }
+
+
+    function getEnglishMeaning(card) {
+
+        const englishMeaning =
+            card.querySelector(".english-meaning");
+
+        if (!englishMeaning) {
+            return "";
+        }
+
+        return englishMeaning
+            .textContent
+            .replace("英文解释：", "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+    }
+
+
+    function getPartOfSpeech(card) {
+
+        const wordInfo =
+            card.querySelector(".word-info")
+                .textContent
+                .replace("词性：", "")
+                .replace(/\s+/g, " ")
+                .trim();
+
+        const parts = wordInfo
+            .split(/[；;、，,\/\s]+/)
+            .filter(function (part) {
+                return part;
+            });
+
+        for (const part of parts) {
+
+            if (part.includes("名词")) {
+                return "名词";
+            }
+
+            if (part.includes("动词")) {
+                return "动词";
+            }
+
+            if (part.includes("形容词")) {
+                return "形容词";
+            }
+
+        }
+
+        // Translation can introduce parts of speech not present in the original bank.
+        const additionalParts = {
+            "n.": "名词", "v.": "动词", "adj.": "形容词", "adv.": "副词",
+            "prep.": "介词", "pron.": "代词", "conj.": "连词", "interj.": "感叹词"
+        };
+        for (const part of parts) {
+            if (additionalParts[part]) return additionalParts[part];
+            for (const name of ["副词", "介词", "代词", "连词", "感叹词", "数词", "冠词", "短语"]) {
+                if (part.includes(name)) return name;
+            }
+        }
+        return "名词";
+
+    }
+
+
+    function getExample(card) {
+
+        return card.querySelector(".example")
+            .textContent
+            .replace("例句：", "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+    }
+
+
+    const fallbackQuizDefinitions = {
+
+        "名词": [
+            {
+                english: "a person, place, thing, or idea",
+                chinese: "人、地点、事物或想法"
+            },
+            {
+                english: "an amount of money paid for a service",
+                chinese: "为某项服务支付的钱数"
+            },
+            {
+                english: "a fact or detail that helps explain a situation",
+                chinese: "有助于解释某种情况的事实或细节"
+            }
+        ],
+
+        "形容词": [
+            {
+                english: "having a particular quality or feature",
+                chinese: "具有某种性质或特征的"
+            },
+            {
+                english: "easy to see, understand, or recognize",
+                chinese: "容易看见、理解或辨认的"
+            },
+            {
+                english: "connected with a specific time, place, or purpose",
+                chinese: "与特定时间、地点或目的有关的"
+            }
+        ],
+
+        "动词": [
+            {
+                english: "to examine something carefully to find its cause",
+                chinese: "仔细检查某事物以找出原因"
+            },
+            {
+                english: "to move something from one place to another",
+                chinese: "把某物从一个地方移到另一个地方"
+            },
+            {
+                english: "to provide someone with help or support",
+                chinese: "向某人提供帮助或支持"
+            }
+        ],
+        "副词": [
+            {english: "in a very careful way", chinese: "非常仔细地"},
+            {english: "at an early time", chinese: "在较早的时候"},
+            {english: "again after an interruption", chinese: "中断后再次"}
+        ],
+        "介词": [
+            {english: "at a lower level than something", chinese: "在某物下方"},
+            {english: "at the side of something", chinese: "在某物旁边"},
+            {english: "on the opposite side of something", chinese: "在某物另一边"}
+        ],
+        "代词": [
+            {english: "the person speaking or writing", chinese: "说话或写作的人"},
+            {english: "the person being spoken to", chinese: "被交谈的人"},
+            {english: "a person whose identity is not known", chinese: "身份未知的某人"}
+        ],
+        "连词": [
+            {english: "used to introduce a reason", chinese: "用于引出原因"},
+            {english: "used to introduce a condition", chinese: "用于引出条件"},
+            {english: "used to contrast two ideas", chinese: "用于对比两个想法"}
+        ],
+        "感叹词": [
+            {english: "an expression of sudden surprise", chinese: "突然惊讶时的表达"},
+            {english: "an expression used to greet someone", chinese: "问候他人时的表达"},
+            {english: "an expression of agreement", chinese: "表示同意的表达"}
+        ],
+        "数词": [
+            {english: "the number after one and before three", chinese: "一之后、三之前的数"},
+            {english: "the number after nine and before eleven", chinese: "九之后、十一之前的数"},
+            {english: "the number after three and before five", chinese: "三之后、五之前的数"}
+        ],
+        "冠词": [
+            {english: "used before a nonspecific consonant-sound noun", chinese: "用于辅音音素开头的非特指名词前"},
+            {english: "used before a nonspecific vowel-sound noun", chinese: "用于元音音素开头的非特指名词前"},
+            {english: "used before a specific or already identified noun", chinese: "用于特指或已提到的名词前"}
+        ],
+        "短语": [
+            {english: "an expression meaning for example", chinese: "表示举例的短语"},
+            {english: "an expression meaning at the same time", chinese: "表示同时的短语"},
+            {english: "an expression meaning in spite of that", chinese: "表示尽管如此的短语"}
+        ]
+
+    };
+
+
+    function getQuizOptions(card) {
+
+        const partOfSpeech =
+            getPartOfSpeech(card);
+
+        const correctOption = {
+            english: getEnglishMeaning(card),
+            chinese: getMeaning(card),
+            correct: true
+        };
+
+        const cardOptions =
+            wordCards
+                .filter(function (otherCard) {
+                    return otherCard !== card &&
+                        getPartOfSpeech(otherCard) === partOfSpeech;
+                })
+                .map(function (otherCard) {
+                    return {
+                        english: getEnglishMeaning(otherCard),
+                        chinese: getMeaning(otherCard),
+                        correct: false
+                    };
+                });
+
+        const fallbackOptions =
+            (fallbackQuizDefinitions[partOfSpeech] || [])
+                .map(function (option) {
+                    return {
+                        english: option.english,
+                        chinese: option.chinese,
+                        correct: false
+                    };
+                });
+
+        const distractors =
+            shuffle(cardOptions.concat(fallbackOptions))
+                .filter(function (option) {
+                    return option.english &&
+                        option.english !== correctOption.english;
+                })
+                .slice(0, 2);
+
+        return shuffle([correctOption].concat(distractors));
+
+    }
+
+
+    function appendHighlightedWord(container, sentence, word) {
+
+        const sentenceLower = sentence.toLowerCase();
+        const wordLower = word.toLowerCase();
+        const start = sentenceLower.indexOf(wordLower);
+
+        if (start < 0) {
+            container.textContent = sentence;
+            return;
+        }
+
+        const before = document.createTextNode(
+            sentence.slice(0, start)
+        );
+
+        const highlighted = document.createElement("span");
+        highlighted.className = "quiz-highlight";
+        highlighted.textContent = sentence.slice(
+            start,
+            start + word.length
+        );
+
+        const after = document.createTextNode(
+            sentence.slice(start + word.length)
+        );
+
+        container.appendChild(before);
+        container.appendChild(highlighted);
+        container.appendChild(after);
+
+    }
+
+
+    function getWordProgress(word) {
+
+        if (!progress[word]) {
+            progress[word] = {
+                reviews: 0,
+                mistakes: 0
+            };
+        }
+
+        progress[word].reviews =
+            Number(progress[word].reviews) || 0;
+
+        progress[word].mistakes =
+            Number(progress[word].mistakes) || 0;
+
+        return progress[word];
+
+    }
+
+
+    function updateCardCounts(card) {
+
+        const word = getWord(card);
+        const wordProgress = getWordProgress(word);
+        const reviewCount = card.querySelector(".review-count");
+        const mistakeCount = card.querySelector(".mistake-count");
+
+        if (reviewCount) {
+            reviewCount.textContent = wordProgress.reviews;
+        }
+
+        if (mistakeCount) {
+            mistakeCount.textContent = wordProgress.mistakes;
+        }
+
+    }
+
+
+    function addReviewControls(card) {
+
+        if (card.querySelector(".card-actions")) {
+            updateCardCounts(card);
+            return;
+        }
+
+        const actions = document.createElement("div");
+        actions.className = "card-actions";
+
+        const reviewButton = document.createElement("button");
+        reviewButton.className = "review-button";
+        reviewButton.type = "button";
+        reviewButton.textContent = "复习 +1";
+
+        const reviewStat = document.createElement("span");
+        reviewStat.className = "review-stat";
+        reviewStat.innerHTML =
+            "复习次数：<strong class=\"review-count\">0</strong>";
+
+        const mistakeStat = document.createElement("span");
+        mistakeStat.className = "mistake-stat";
+        mistakeStat.innerHTML =
+            "答错次数：<strong class=\"mistake-count\">0</strong>";
+
+        reviewButton.addEventListener(
+            "click",
+            function () {
+
+                const wordProgress =
+                    getWordProgress(getWord(card));
+
+                wordProgress.reviews += 1;
+                updateCardCounts(card);
+                saveProgress();
+
+            }
+        );
+
+        actions.appendChild(reviewButton);
+        actions.appendChild(reviewStat);
+        actions.appendChild(mistakeStat);
+        card.appendChild(actions);
+        updateCardCounts(card);
+
+    }
+
+
+    /*
+     * 搜索功能
+     *
+     * 输入单词后，
+     * 自动筛选包含对应文字的单词卡。
+     */
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const wordCards =
+        Array.from(document.querySelectorAll(".word-card"));
+
+
+    wordCards.forEach(addReviewControls);
+
+    saveProgress();
+    saveDailyScores();
+    updateDailyScoreDisplay();
+
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            // 获取搜索内容
+            const keyword =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+
+            // 遍历所有单词卡
+            wordCards.forEach(
+                function (card) {
+
+                    const text =
+                        card.innerText
+                            .toLowerCase();
+
+
+                    /*
+                     * 如果单词卡中包含搜索内容
+                     * 就显示
+                     *
+                     * 否则隐藏
+                     */
+
+                    if (
+                        text.includes(keyword)
+                    ) {
+
+                        card.style.display =
+                            "";
+
+                    } else {
+
+                        card.style.display =
+                            "none";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+     * 顶部三题蒙版自测
+     *
+     * 每次重新打开 HTML 都重新随机抽取三张词卡。
+     * 每道题只计一次答题结果，答错时更新对应卡片的错题数。
+     */
+
+    const quizOverlay =
+        document.getElementById("quizOverlay");
+
+    const quizQuestions =
+        document.getElementById("quizQuestions");
+
+    const quizStatus =
+        document.getElementById("quizStatus");
+
+    const quizDoneButton =
+        document.getElementById("quizDoneButton");
+
+    const quizAgainButton =
+        document.getElementById("quizAgainButton");
+
+    const quizSkipButton =
+        document.getElementById("quizSkipButton");
+
+
+    function shuffle(items) {
+
+        return items
+            .map(function (item) {
+                return {
+                    item: item,
+                    sort: Math.random()
+                };
+            })
+            .sort(function (a, b) {
+                return a.sort - b.sort;
+            })
+            .map(function (entry) {
+                return entry.item;
+            });
+
+    }
+
+
+    function getQuestionWeight(card) {
+
+        const wordProgress =
+            getWordProgress(getWord(card));
+
+        const reviewFactor =
+            1 / Math.pow(1 + wordProgress.reviews, 0.85);
+
+        const mistakeFactor =
+            1 + wordProgress.mistakes * 2.5;
+
+        return Math.max(
+            0.05,
+            reviewFactor * mistakeFactor
+        );
+
+    }
+
+
+    function weightedSample(cards, count) {
+
+        const remaining = cards.slice();
+        const selected = [];
+
+        while (remaining.length > 0 && selected.length < count) {
+
+            const totalWeight = remaining.reduce(
+                function (total, card) {
+                    return total + getQuestionWeight(card);
+                },
+                0
+            );
+
+            let target = Math.random() * totalWeight;
+            let selectedIndex = remaining.length - 1;
+
+            for (let index = 0; index < remaining.length; index += 1) {
+
+                target -= getQuestionWeight(remaining[index]);
+
+                if (target <= 0) {
+                    selectedIndex = index;
+                    break;
+                }
+
+            }
+
+            selected.push(remaining.splice(selectedIndex, 1)[0]);
+
+        }
+
+        return selected;
+
+    }
+
+
+    function closeQuiz() {
+
+        quizOverlay.classList.add("is-hidden");
+        document.body.classList.remove("quiz-open");
+
+    }
+
+
+    function buildQuiz() {
+
+        quizQuestions.innerHTML = "";
+        quizDoneButton.hidden = true;
+        quizAgainButton.hidden = true;
+        document.body.classList.add("quiz-open");
+
+        const selectedCards =
+            weightedSample(wordCards, Math.min(3, wordCards.length));
+
+        const quizModes =
+            shuffle(["word", "word", "sentence"]);
+
+        let answeredCount = 0;
+        let correctCount = 0;
+        let scoreRecorded = false;
+
+        selectedCards.forEach(
+            function (card, index) {
+
+                const word = getWord(card);
+                const mode = quizModes[index] || "word";
+                const options = getQuizOptions(card);
+
+                const question = document.createElement("article");
+                question.className = "quiz-question";
+
+                const title = document.createElement("h3");
+                title.textContent = mode === "sentence"
+                    ? (index + 1) + "．情景题"
+                    : (index + 1) + "．" + word;
+
+                question.appendChild(title);
+
+                if (mode === "sentence") {
+
+                    const sentence = document.createElement("p");
+                    sentence.className = "quiz-sentence";
+                    appendHighlightedWord(
+                        sentence,
+                        getExample(card),
+                        word
+                    );
+                    question.appendChild(sentence);
+
+                }
+
+                const promptRow = document.createElement("div");
+                promptRow.className = "quiz-prompt-row";
+
+                const prompt = document.createElement("p");
+                prompt.className = "quiz-prompt";
+                prompt.textContent = mode === "sentence"
+                    ? "请选择句中高亮单词的英文释义："
+                    : "请选择这个单词的英文释义：";
+
+                const helpButton = document.createElement("button");
+                helpButton.className = "quiz-help-button";
+                helpButton.type = "button";
+                        helpButton.textContent = "真不行了";
+
+                const optionsBox = document.createElement("div");
+                optionsBox.className = "quiz-options";
+
+                options.forEach(
+                    function (option) {
+
+                        const optionButton =
+                            document.createElement("button");
+
+                        optionButton.className = "quiz-option";
+                        optionButton.type = "button";
+                        optionButton.textContent = option.english;
+                        optionButton.dataset.english = option.english;
+                        optionButton.dataset.chinese = option.chinese;
+                        optionButton.dataset.correct =
+                            String(option.correct);
+
+                        optionButton.addEventListener(
+                            "click",
+                            function () {
+
+                                if (question.dataset.answered) {
+                                    return;
+                                }
+
+                                question.dataset.answered = "true";
+                                answeredCount += 1;
+                                helpButton.disabled = true;
+
+                                const isCorrect =
+                                    optionButton.dataset.correct === "true";
+
+                                optionsBox
+                                    .querySelectorAll(".quiz-option")
+                                    .forEach(function (button) {
+                                        button.disabled = true;
+
+                                        if (button.dataset.correct === "true") {
+                                            button.classList.add("correct");
+                                        }
+                                    });
+
+                                if (isCorrect) {
+                                    optionButton.classList.add("correct");
+                                    correctCount += 1;
+
+                                    const wordProgress =
+                                        getWordProgress(word);
+
+                                    wordProgress.reviews += 0.5;
+                                    updateCardCounts(card);
+                                    saveProgress();
+                                } else {
+                                    optionButton.classList.add("wrong");
+
+                                    const wordProgress =
+                                        getWordProgress(word);
+
+                                    wordProgress.mistakes += 1;
+                                    updateCardCounts(card);
+                                    saveProgress();
+                                }
+
+                                if (answeredCount === selectedCards.length) {
+
+                                    if (!scoreRecorded) {
+                                        scoreRecorded = true;
+                                        recordDailyScore(
+                                            correctCount,
+                                            selectedCards.length
+                                        );
+                                    }
+
+                                    const todayRecord =
+                                        getTodayScoreRecord();
+
+                                    quizStatus.textContent =
+                                        "本次得分：" + correctCount +
+                                        " / " + selectedCards.length +
+                                        "；今日累计：" + todayRecord.score;
+                                    quizAgainButton.hidden = false;
+                                    quizDoneButton.hidden = false;
+                                } else {
+                                    quizStatus.textContent =
+                                        "已完成 " + answeredCount + " / " + selectedCards.length + " 题。";
+                                }
+
+                            }
+                        );
+
+                        optionsBox.appendChild(optionButton);
+
+                    }
+                );
+
+                helpButton.addEventListener(
+                    "click",
+                    function () {
+
+                        if (question.dataset.answered) {
+                            return;
+                        }
+
+                        optionsBox
+                            .querySelectorAll(".quiz-option")
+                            .forEach(function (button) {
+                                button.textContent = button.dataset.chinese;
+                            });
+
+                        helpButton.textContent = "已切换为中文";
+                        helpButton.disabled = true;
+
+                    }
+                );
+
+                promptRow.appendChild(prompt);
+                promptRow.appendChild(helpButton);
+                question.appendChild(promptRow);
+                question.appendChild(optionsBox);
+                quizQuestions.appendChild(question);
+
+            }
+        );
+
+        if (selectedCards.length === 0) {
+            quizStatus.textContent = "当前没有可用于自测的词卡。";
+            quizDoneButton.hidden = false;
+        } else {
+            quizStatus.textContent =
+                "请完成全部题目后关闭自测。";
+        }
+
+        quizOverlay.classList.remove("is-hidden");
+
+    }
+
+
+    quizDoneButton.addEventListener("click", closeQuiz);
+    quizAgainButton.addEventListener("click", buildQuiz);
+    quizSkipButton.addEventListener("click", closeQuiz);
+
+    buildQuiz();
+
+</script>
+
+
+<dialog id="readingDialog" class="reading-dialog" aria-label="精选短文">
+    <div class="reading-topbar"><strong>精选短文 / READING ROOM</strong><button id="readingClose" type="button" aria-label="关闭精选短文">关闭 ×</button></div>
+    <div id="readingBody" class="reading-body"></div>
+    <details id="readingGenerator" class="reading-generator">
+        <summary>补充资料</summary>
+        <div id="readingGeneratorBody"></div>
+    </details>
+</dialog>
+<script src="reading-bank.js"></script>
+<script src="reading-nasa.js"></script>
+<script src="reading-engine.js"></script>
+<script src="reading-ui.js"></script>
+<dialog id="translationDialog" class="translation-dialog" aria-labelledby="translationTitle">
+    <header class="translation-topbar"><div><small>TRANSLATION STUDIO</small><h2 id="translationTitle">双语翻译与词汇整理</h2></div><button id="translationClose" type="button" aria-label="关闭翻译">关闭 ×</button></header>
+    <div id="translationBody"></div>
+</dialog>
+<script src="translation-input.js"></script>
+<script src="translation-ui.js"></script>
+</body>
+
+</html>
+```

@@ -1,0 +1,44 @@
+# Local credentials (only the empty template is shared).
+.env*
+!.env.example
+.aws/
+.codex/
+.agents/
+
+# Private usage, budgets and recovery state. Never delete these to reset a budget.
+.model-usage.jsonl
+.reading-generation-usage.jsonl
+.translation-usage.jsonl
+.translation*-budget*.json*
+*usage*.jsonl
+*.reading-tmp
+.reading-transaction.json
+
+# User inputs, deliverables and actual acceptance records remain local.
+/input/
+/output/
+/最终验收报告.md
+/reading-themes.js
+
+# Reviewed redistribution allowlist; new reading files require a rights review.
+/reading_materials/*
+!/reading_materials/docker-user-v1-0.md
+!/reading_materials/docker-user-v1-1.md
+!/reading_materials/docker-user-v1-2.md
+!/reading_materials/generated-e72110938586236e9bcf.md
+
+# Installed dependencies and disposable development artifacts.
+node_modules/
+.pnpm-store/
+tmp/
+.cache/
+coverage/
+test-results/
+playwright-report/
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

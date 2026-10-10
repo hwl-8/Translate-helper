@@ -1,0 +1,69 @@
+/* Additive reading UI; original vocabulary styles remain intact. */
+.header { min-height: 162px; padding-right: 262px; }
+.header .daily-score { top: 76px; right: 20px; width: 214px; }
+.reading-launcher { position: absolute; top: 18px; right: 20px; width: 214px; height: 44px; text-align: left; }
+.reading-launcher button { cursor: pointer; font: inherit; border: 0; }
+.reading-trigger { width: 180px; height: 42px; border-radius: 12px; background: #2c3e50; color: white; }
+.reading-levels { display: flex; width: 214px; height: 46px; background: #2c3e50; border-radius: 12px; padding: 4px; gap: 3px; }
+.reading-levels[hidden], .reading-trigger[hidden] { display: none; }
+.reading-levels button { flex: 1; background: transparent; color: white; border-radius: 8px; }
+.reading-levels button:hover, .reading-levels button:focus-visible { background: #49687b; }
+.reading-dialog { width: min(940px, calc(100% - 24px)); max-height: 90vh; padding: 0; border: 0; border-radius: 18px; color: #293f49; background: #fafbf9; box-shadow: 0 20px 90px #172d3d55; }
+.reading-dialog::backdrop { background: #23384499; backdrop-filter: blur(5px); }
+.reading-topbar { position: sticky; top: 0; z-index: 2; padding: 14px 22px; display: flex; align-items: center; justify-content: space-between; background: #fafbf9; border-bottom: 1px solid #dce4e1; gap: 12px; }
+.reading-topbar strong { font-size: 14px; color: #617c70; }
+.reading-topbar button, .reading-tools button { font: inherit; border: 1px solid #cfdbd5; border-radius: 8px; background: white; padding: 7px 12px; cursor: pointer; color: #334d40; }
+.reading-tools button:disabled { cursor: not-allowed; opacity: .52; }
+.reading-body { max-width: 760px; margin: auto; padding: 24px 28px 38px; }
+.reading-body h2 { font: 700 clamp(25px, 4vw, 36px)/1.2 Georgia, serif; color: #273e33; margin: 8px 0 16px; }
+.reading-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.reading-meta span { border: 1px solid #d9e3dd; padding: 5px 9px; border-radius: 20px; font-size: 12px; color: #597265; }
+.reading-notice, .reading-status, .reading-generation-status { font-size: 13px; line-height: 1.7; color: #67776d; }
+.reading-error { color: #9d3232; }
+.reading-sources { font-size: 13px; line-height: 1.8; margin-bottom: 24px; }
+.reading-sources a { color: #356d65; }
+.reading-sources summary { cursor: pointer; }
+.reading-navigation { margin: 12px 0; }
+.reading-questions, .reading-generator { scroll-margin-top: 76px; }
+.reading-review-item { margin: 12px 0; padding: 12px; border: 1px solid #d9e3dd; border-radius: 10px; background: white; overflow-wrap: anywhere; }
+.reading-review-item summary { font-size: 14px; }
+.reading-generator .reading-review-confirm { display: flex; align-items: flex-start; gap: 8px; margin-top: 16px; }
+.reading-generator .reading-review-confirm input { width: auto; margin-top: 3px; flex: 0 0 auto; }
+.reading-glossary summary { cursor: pointer; }
+.reading-glossary p { margin-bottom: 0; }
+.reading-review-status { font-size: 14px; line-height: 1.7; }
+.reading-review-item .reading-prose { font-size: 17px; }
+.reading-prose { font: 18px/1.95 Georgia, 'Times New Roman', serif; color: #28352e; }
+.reading-prose p { margin: 0 0 20px; }
+.reading-prose .source-label { font: 600 12px/1.4 'Segoe UI', sans-serif; letter-spacing: .04em; color: #728779; margin: 28px 0 12px; }
+.reading-prose mark { color: inherit; border-radius: 3px; padding: 0 2px; background: #e4efe8; }
+.reading-prose mark.new-word { background: #fff0c9; }
+.reading-glossary { font: 14px/1.8 'Microsoft YaHei', sans-serif; padding: 14px; background: #edf3ef; border-radius: 10px; margin: 22px 0; }
+.reading-questions { border-top: 1px solid #d9e3dd; margin-top: 30px; padding-top: 12px; }
+.reading-question { margin: 18px 0; border: 1px solid #d9e3dd; border-radius: 12px; padding: 16px; background: white; }
+.reading-question h3 { font-size: 16px; line-height: 1.6; margin: 0 0 12px; }
+.reading-question .quiz-option { margin-top: 8px; }
+.reading-question .reading-help { border: 0; padding: 6px 9px; margin-top: 12px; background: #f5eee0; border-radius: 6px; cursor: pointer; }
+.reading-explanation { white-space: pre-line; font-size: 14px; line-height: 1.7; }
+.reading-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.reading-generator { max-width: 760px; margin: 0 auto 30px; padding: 0 28px; }
+.reading-generator summary { cursor: pointer; font-weight: 700; color: #334d40; padding: 12px 0; }
+.reading-generator form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 16px; border: 1px solid #d9e3dd; border-radius: 12px; background: #f4f7f5; }
+.reading-generator label { display: grid; gap: 5px; font-size: 13px; }
+.reading-generator input, .reading-generator select, .reading-generator textarea { box-sizing: border-box; width: 100%; font: inherit; padding: 8px; border: 1px solid #c7d5ce; border-radius: 7px; background: white; }
+.reading-generator .reading-generation-wide { grid-column: 1 / -1; }
+.reading-generator .reading-generation-confirm { display: flex; align-items: flex-start; grid-column: 1 / -1; }
+.reading-generator .reading-generation-confirm input { width: auto; margin-top: 3px; }
+.reading-generator button { width: fit-content; font: inherit; border: 0; border-radius: 8px; background: #2c3e50; color: white; padding: 9px 16px; cursor: pointer; }
+.reading-dialog button:focus-visible, .reading-launcher button:focus-visible { outline: 3px solid #deaa47; outline-offset: 3px; }
+@media(max-width: 760px) {
+    .header { padding: 160px 12px 24px; }
+    .header .daily-score { position: absolute; top: 76px; right: 12px; margin: 0; text-align: right; width: 214px; }
+    .reading-launcher { right: 12px; }
+    .reading-body { padding: 18px; }
+    .reading-prose { font-size: 17px; }
+    .reading-topbar { padding: 12px 16px; }
+    .reading-generator { padding: 0 18px; }
+    .reading-generator form { grid-template-columns: 1fr; }
+}
+@media(prefers-reduced-motion: no-preference) { .reading-levels { animation: reading-reveal .15s ease-out; transform-origin: left top; } @keyframes reading-reveal { from { transform: scale(.94); opacity: .4; } to { transform: scale(1); opacity: 1; } } }
