@@ -19,6 +19,7 @@
 /output/
 /最终验收报告.md
 /reading-themes.js
+/archive/
 
 # Reviewed redistribution allowlist; new reading files require a rights review.
 /reading_materials/*
@@ -34,6 +35,7 @@ tmp/
 .cache/
 coverage/
 test-results/
+tests/.translation-budget-test-*/
 playwright-report/
 *.log
 *.tmp

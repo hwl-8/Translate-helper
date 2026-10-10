@@ -29,21 +29,26 @@ Tavily 检索
 - `input/`：用户提供、尚待处理或用于追溯的输入材料。
 - `reading_materials/`：版本 1 Markdown 阅读资料库；一篇一文件，不是正式词库。
 - `output/`：用户交付物、截图和历史验收记录。不得把整个目录当缓存删除。
-- `reading-server.cjs`、`reading-ui.js`、`reading.css`：本地服务、阅读界面和样式。
-- `reading-engine.js`：阅读资格、难度、长度、词汇覆盖和题目规则。
-- `reading-materials.cjs`、`reading-material-format.md`：Markdown 解析、校验、转换与格式说明。
-- `reading-search.cjs`：Tavily 搜索适配器。
-- `reading-models.cjs`：DeepSeek 调用、限额、重试和脱敏用量记录。
-- `reading-sources.cjs`、`reading-generation-schema.cjs`、`reading-generate.cjs`：正文获取、草稿 schema 和生成编排。
-- `reading-retention.cjs`：按“档位 + 难度”规划模型材料保留候选，并在用户确认后重新校验、精确清理；默认不自动删除。
-- `reading-review.cjs`：本地审核预览、资格提示、修订冲突检查和状态原子保存；审批由用户在页面明确执行，程序不得自动批准模型材料。
-- `translation-input.js`、`translation-service.cjs`、`translation-ui.js`、`translation.css`：独立输入适配、翻译任务、词卡校验及页面；`translation-budget.cjs` 为真实验收提供持久预算预留。
-- `reading-bank.js`、`reading-nasa.js`、`reading-supplements.json`：资料不足时仍在使用的预置阅读与候选词卡。
-- `reading-themes.js`：由用户 BERT 论文整理出的归档候选主题，没有运行时引用；其可靠部分已另行改写为正式 20/45min Markdown，原候选仍用于追溯，不得擅自删除。
-- `import-reading.cjs`：把经过审核的 JSON 阅读包导入预置材料。
-- `migrate-reading-materials.cjs`：把现有补充包迁移为 Markdown；目标存在时拒绝覆盖。
-- `启动词库.cmd`：启动 `reading-server.cjs`，服务仅监听 `127.0.0.1:47831`。
-- `check-*.cjs`：自动化与隔离浏览器测试；`check-live-material.cjs` 是指定真实 Markdown 的离线验收工具。
+- `server/project-paths.cjs`：定位原项目根目录；`.env`、正式词库、资料目录和本地账本不能改为相对服务文件或终端工作目录定位。
+- `server/reading-server.cjs`、`modules/reading/reading-ui.js`、`modules/reading/reading.css`：本地服务、阅读界面和样式。
+- `modules/reading/reading-engine.js`：阅读资格、难度、长度、词汇覆盖和题目规则。
+- `modules/reading/reading-materials.cjs`、`docs/reading-material-format.md`：Markdown 解析、校验、转换与格式说明。
+- `modules/reading/reading-search.cjs`：Tavily 搜索适配器。
+- `server/reading-models.cjs`：DeepSeek 调用、限额、重试和脱敏用量记录。
+- `modules/reading/reading-sources.cjs`、`modules/reading/reading-generation-schema.cjs`、`modules/reading/reading-generate.cjs`：正文获取、草稿 schema 和生成编排。
+- `modules/reading/reading-retention.cjs`：按“档位 + 难度”规划模型材料保留候选，并在用户确认后重新校验、精确清理；默认不自动删除。
+- `modules/reading/reading-review.cjs`：本地审核预览、资格提示、修订冲突检查和状态原子保存；审批由用户在页面明确执行，程序不得自动批准模型材料。
+- `modules/translation/translation-input.js`、`modules/translation/translation-service.cjs`、`modules/translation/translation-ui.js`、`modules/translation/translation.css`：独立输入适配、翻译任务、词卡校验及页面；`modules/translation/translation-budget.cjs` 为真实验收提供持久预算预留。
+- `modules/reading/reading-bank.js`、`modules/reading/reading-nasa.js`、`modules/reading/reading-supplements.json`：资料不足时仍在使用的预置阅读与候选词卡。
+- `archive/reading-themes.js`：由用户 BERT 论文整理出的归档候选主题，没有运行时引用；其可靠部分已另行改写为正式 20/45min Markdown，原候选仍用于追溯，不得擅自删除。
+- `tools/import-reading.cjs`：把经过审核的 JSON 阅读包导入预置材料。
+- `tools/migrate-reading-materials.cjs`：把现有补充包迁移为 Markdown；目标存在时拒绝覆盖。
+- `启动词库.cmd`：启动 `server/reading-server.cjs`，服务仅监听 `127.0.0.1:47831`。
+- `tests/check-*.cjs`：自动化与隔离浏览器测试；`tools/check-live-material.cjs` 是指定真实 Markdown 的离线验收工具。
+- `tests/test-reading-fixtures.cjs`：仅在临时副本生成测试资料，不依赖私有 BERT 文件。
+- `tools/`：导入、迁移、单篇验收及显式授权的真实翻译验收工具，不是日常页面入口。
+- `docs/`：现行使用、模型、生成与格式说明；`docs/history/`：保留原事实的历史设计。
+- `archive/`：仅保留本机历史报告及 BERT 候选，不分发、不参与运行。
 - `package.json`、`package-lock.json`：npm 项目和依赖锁定。统一使用 npm，不维护第二份包管理器锁文件。
 - `.env.example`：无真实密钥的配置模板；`.env` 是本地私密配置，不得读取输出或提交。
 
@@ -100,10 +105,11 @@ Tavily 检索
 
 ## 8. 测试与完成标准
 
-统一入口：`npm test`。它依次检查启动器、词库一致性、Markdown、DeepSeek 模拟、Tavily/生成模拟、阅读功能、资料库界面和故障处理；不会发起真实付费请求。
+统一入口：`npm test`。它依次检查模块目录与资源路径、启动器、词库一致性、Markdown、DeepSeek 模拟、Tavily/生成模拟、阅读功能、资料库界面、翻译及故障处理；不会发起真实付费请求。
 
 常用专项入口：
 
+- `npm run test:layout`：模块路径、根目录边界及资源引用检查。
 - `npm run test:startup`
 - `npm run test:materials`
 - `npm run test:models`
@@ -115,7 +121,7 @@ Tavily 检索
 - `npm run test:reading-library`
 - `npm run test:acceptance`
 - `npm run test:translation`：翻译任务、候选卡、持久预算与隔离页面模拟验收；不会付费。
-- `node check-live-material.cjs reading_materials/<文件>.md`：对指定正式材料做离线隔离验收。
+- `node tools/check-live-material.cjs reading_materials/<文件>.md`：对指定正式材料做离线隔离验收。
 
 页面和词库测试必须使用临时副本及隔离浏览器，不得向真实词库写测试词。词卡或页面变更后，应验证中英文搜索、三题自测、同词性选项、情景高亮、中文提示、复习与错误计数、答对 +0.5、每日得分、“再来”、加权抽题和刷新持久化。
 
@@ -128,23 +134,24 @@ Tavily 检索
 - 自动校验保证格式、字段、长度、覆盖和题目结构，不保证事实、音标、词性、翻译、干扰项或答案语义完全正确；模型材料仍需人工抽查。
 - 正文提取适合公开可访问的 HTML；动态渲染、付费墙和部分 PDF 不保证可用。
 - 材料保留采用确认式清理，不会在打开或生成文章时自动删除；浏览器无法可靠感知其他浏览器配置中的未完成状态，因此仍需用户检查候选后确认。
-- `reading-themes.js` 仅保留本机追溯，不作为运行时资料库；可靠部分已另行制成仅保留本地的 Markdown。
+- `archive/reading-themes.js` 仅保留本机追溯，不作为运行时资料库；可靠部分已另行制成仅保留本地的 Markdown。
 - 页面“补充资料 / 审核”可预览和审批；按正文计算库存，仅一篇时禁用换文。BERT 长文仍有技术背景负担，词卡数量不是个人英语水平测量。
 - 直接打开本地 HTML 与通过 HTTP 地址访问具有不同浏览器存储空间，系统不自动迁移或合并记录。
 - 翻译候选是模型草稿，未接入词典服务；人工核对不能由格式校验代替。文件/网址仅预留输入适配接口，不提供实际入口；翻译历史在浏览器本机保存，清除浏览器数据可能丢失。
 
 ## 10. 历史说明
 
-项目过去曾实现 OpenAI + DeepSeek 双模型，以及 Brave Search/SearXNG 可选检索。当前这些入口均已废弃并移除。历史方案见 `精选短文改造计划.md`，历史真实调用与费用事实见本机 `最终验收报告.md` 和 `output/实际API验收记录.json`（不随仓库分发）；历史记录不代表当前依赖或待办。
+项目过去曾实现 OpenAI + DeepSeek 双模型，以及 Brave Search/SearXNG 可选检索。当前这些入口均已废弃并移除。历史方案见 `docs/history/精选短文改造计划.md`，历史真实调用与费用事实见本机 `archive/最终验收报告.md` 和 `output/实际API验收记录.json`（不随仓库分发）；历史记录不代表当前依赖或待办。
 
 ## 11. GitHub 与接手维护
 
 - 项目使用独立 Git 仓库、`main` 分支；不继承或修改上层用户目录的仓库历史、配置和远程。目标为私有 `hwl-8/Translate-helper`；创建、推送及可见性变更按用户当次授权执行，禁止强推或覆盖远程工作。
 - 当前不指定项目许可证。第三方许可与来源见 `THIRD_PARTY_NOTICES.md`、`third_party/docker-docs-LICENSE.txt`，不将 Docker 的许可当作全项目许可。
-- 上传运行代码、测试、npm 清单与锁文件、维护文档、正式 HTML/JSON 及四篇白名单 Docker Markdown。`input/`、`output/`、`reading-themes.js`、BERT/正念 Markdown、`最终验收报告.md`、真实配置、预算与用量留在本机，不删除。
+- 上传运行代码、测试、npm 清单与锁文件、维护文档、正式 HTML/JSON 及四篇白名单 Docker Markdown。`input/`、`output/`、`archive/reading-themes.js`、BERT/正念 Markdown、`archive/最终验收报告.md`、真实配置、预算与用量留在本机，不删除。
+- 根目录 HTML、索引、启动器、配置和私密状态位置不变，以保留 file 页面的学习记录；运行代码归入 `server/`、`modules/reading/`、`modules/translation/`，测试归入 `tests/`、工具归入 `tools/`。保持 `npm start`、`npm test` 和双击启动方式，修改路径时同步服务静态映射、脚本依赖、临时测试副本和说明。不得借目录整理改变业务或许可边界。
 - 阅读材料采用 `.gitignore` 文件白名单。新增材料须先核对来源、改写标记与分发许可，再显式更新白名单及第三方归属；私有仓库同样遵守。不能用 `git add -f` 绕过边界。
 - `.gitignore` 不能清除已跟踪或历史泄露。提交前检查暂存文件及敏感路径历史，发现风险先停止推送；未经授权不重写历史、删除本地配置或要求用户在聊天中提供令牌。
-- README 是安装与使用入口，`当前功能说明.md` 是现状说明；旧计划和验收只作历史证据。数量、模型默认值、可用性和验证范围都应从实际文件重新核对。
+- README 是安装与使用入口，`docs/当前功能说明.md` 是现状说明；旧计划和验收只作历史证据。数量、模型默认值、可用性和验证范围都应从实际文件重新核对。
 - Node.js ≥20，推荐 22；使用 `npm ci` 与 `package-lock.json`。当前完整验证为 Windows + Microsoft Edge，其他平台未保证。测试资料应在临时目录生成，不依赖本机私有文件；测试输出进入被忽略的 `output/`。
 - 文本 UTF-8，Git 中 LF；`.cmd` ASCII/CRLF，二进制文件不作文本转换。不全仓格式化、不盲改哈希断言；只读规范的工作文件不得因整理被重写。
 - 整理任务须验证拟上传文件的无密钥干净副本：安装、启动、关闭状态与完整 `npm test`；逐文件审阅暂存差异，不使用 `git add .`。交付分别报告本地整理、提交、推送状态。

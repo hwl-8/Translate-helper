@@ -14,7 +14,7 @@ if not exist "%NODE_EXE%" (
   pause
   exit /b 1
 )
-"%NODE_EXE%" "%~dp0reading-server.cjs" --open %*
+"%NODE_EXE%" "%~dp0server\reading-server.cjs" --open %*
 set "SERVER_EXIT=%ERRORLEVEL%"
 if "%SERVER_EXIT%"=="0" exit /b 0
 :startup_failed

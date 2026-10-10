@@ -24,7 +24,7 @@ npm start
 
 Windows 也可双击 `启动词库.cmd`，保持服务窗口开启。启动器优先检查已有本地运行时，再使用 PATH 中的 Node.js；新电脑不需要原作者的工具目录，安装 Node.js 并加入 PATH 即可。
 
-默认打开原 `vocabulary.html`，服务只监听 `127.0.0.1:47831`。也可运行 `node reading-server.cjs --no-open` 后手动打开 HTML 或访问 `http://127.0.0.1:47831/`。**file 与 HTTP 页面使用不同学习存储空间**，请选择固定入口；不会自动迁移或清空记录。更新服务代码后关闭旧窗口再重启。
+默认打开原 `vocabulary.html`，服务只监听 `127.0.0.1:47831`。也可运行 `node server/reading-server.cjs --no-open` 后手动打开 HTML 或访问 `http://127.0.0.1:47831/`。**file 与 HTTP 页面使用不同学习存储空间**，请选择固定入口；不会自动迁移或清空记录。更新服务代码后关闭旧窗口再重启。
 
 无 `.env`、无密钥也能启动和阅读本地材料，不需要 `input/`、`output/` 或历史验收文件。测试会自行创建临时数据与输出目录。
 
@@ -40,7 +40,7 @@ Windows 也可双击 `启动词库.cmd`，保持服务窗口开启。启动器�
 
 代码及示例的默认模型是 `deepseek-flash`，允许列表为 `deepseek-flash,deepseek-v4-pro`；本机配置可覆盖，实际可用性取决于供应商及账户。配置改动后重启。页面提交前还要确认费用；不自动切换模型或供应商。超时、token、查询数和重试上限不是货币硬限额。翻译关闭自动模型重试，用户仅重试失败阶段。
 
-全部配置项见 [.env.example](.env.example)，调用和生成细节见 [模型调用说明](模型调用说明.md)、[阅读生成流程](阅读生成流程说明.md)。不要为了首次安装运行真实付费验收脚本；历史预算不构成新的授权。
+全部配置项见 [.env.example](.env.example)，调用和生成细节见 [模型调用说明](docs/模型调用说明.md)、[阅读生成流程](docs/阅读生成流程说明.md)。不要为了首次安装运行真实付费验收脚本；历史预算不构成新的授权。
 
 ## 使用流程
 
@@ -48,7 +48,7 @@ Windows 也可双击 `启动词库.cmd`，保持服务窗口开启。启动器�
 
 搜索框旁“双语翻译”选择方向、粘贴文本、确认费用并提交。逐段查看对照和可展开分析，候选采用摘要勾选与完整卡预览。英译中从原文提词，中译英从英文译文提词。完整卡需人工核对；缺项或明确不可靠的卡禁止入库，例句仅用变形的情况是黄色警示。确认词名清单后逐项保存，新词立即可搜索，刷新后仍在；不会增加学习次数或得分。
 
-翻译历史在本机保存最近 10 次原文和结果，可单条删除或清空，不影响学习记录。共用电脑请注意隐私。详见 [当前功能说明](当前功能说明.md)、[精选短文说明](精选短文说明.md)、[启动与故障处理](启动与故障处理.md)。
+翻译历史在本机保存最近 10 次原文和结果，可单条删除或清空，不影响学习记录。共用电脑请注意隐私。详见 [当前功能说明](docs/当前功能说明.md)、[精选短文说明](docs/精选短文说明.md)、[启动与故障处理](docs/启动与故障处理.md)。
 
 ## 库存、数据与上传边界
 
@@ -56,7 +56,7 @@ Windows 也可双击 `启动词库.cmd`，保持服务窗口开启。启动器�
 
 本机保留 7 篇 Markdown（5min 五篇、20min/45min 各一篇）；仓库只包含已审查的 **4 篇 Docker 5min**。其中三个难度迁移文件共用正文，另一个是网站学习改写，因此当前 level 0 的仓库库存只有两种不同正文。干净克隆的 20/45min 使用预置水循环回退；本机的 BERT 长文与正念材料不随仓库分发。库存会随已学词、审核状态、难度和新词覆盖变化，文件数不等于可读主题数。
 
-`input/`、`output/`、`reading-themes.js`、`最终验收报告.md`、真实配置、用量和预算账本均保留本地。阅读目录采用 `.gitignore` **四文件白名单**：新增材料必须先审核内容与分发许可，再显式更新白名单、测试与归属说明，不能直接强制添加整个目录。
+`input/`、`output/`、`archive/reading-themes.js`、`archive/最终验收报告.md`、真实配置、用量和预算账本均保留本地。阅读目录采用 `.gitignore` **四文件白名单**：新增材料必须先审核内容与分发许可，再显式更新白名单、测试与归属说明，不能直接强制添加整个目录。
 
 Docker 学习改写保留来源与 Apache 2.0 归属；政府科普预置内容保留 USGS/NASA 署名及原文/改写标记。BERT 改写因原论文许可中的禁止分享改编限制不上传，正念材料因分发条件尚未确认不上传。细节见 [第三方来源与许可](THIRD_PARTY_NOTICES.md)。私有仓库也不是忽略第三方许可的理由。
 
@@ -66,21 +66,32 @@ Docker 学习改写保留来源与 Apache 2.0 归属；政府科普预置内容�
 npm test
 ```
 
-完整检查包括词库一致性、启动、Markdown、DeepSeek/Tavily 模拟、审核与清理、阅读/翻译界面、计分、建卡事务和故障恢复。测试使用临时词库和隔离 Edge，不清空或写入日常学习记录，不调用真实付费 API。20/45min 资料库测试从已署名的水循环预置内容生成临时 Markdown，不依赖本机 BERT 文件。
+完整检查包括模块路径与资源加载、词库一致性、启动、Markdown、DeepSeek/Tavily 模拟、审核与清理、阅读/翻译界面、计分、建卡事务和故障恢复。测试使用临时词库和隔离 Edge，不清空或写入日常学习记录，不调用真实付费 API。20/45min 资料库测试从已署名的水循环预置内容生成临时 Markdown，不依赖本机 BERT 文件。
 
-专项命令见 `package.json`，如 `npm run test:translation`、`npm run test:reading-library`。单篇离线验收：`node check-live-material.cjs reading_materials/<文件名>.md`。截图和报告写入被忽略的 `output/`，不进入提交。`check-translation-live.cjs` 是独立付费工具，不在 `npm test` 内；`preview-translation-result.cjs` 仅供本机回放历史验收，需要不随仓库分发的报告，不是日常入口。
+专项命令见 `package.json`，如 `npm run test:translation`、`npm run test:reading-library`。单篇离线验收：`node tools/check-live-material.cjs reading_materials/<文件名>.md`。截图和报告写入被忽略的 `output/`，不进入提交。`tools/check-translation-live.cjs` 是独立付费工具，不在 `npm test` 内；`tools/preview-translation-result.cjs` 仅供本机回放历史验收，需要不随仓库分发的报告，不是日常入口。
 
-| 分类 | 维护入口 |
-| --- | --- |
-| 正式数据/主页面 | `vocabulary.html`、`learned_words.json` |
-| 本地服务与阅读 | `reading-server.cjs`、`reading-ui.js`、`reading.css`、`reading-engine.js` |
-| Markdown/审核/保留 | `reading-materials.cjs`、`reading-review.cjs`、`reading-retention.cjs`、`reading_materials/` |
-| 检索/生成/模型 | `reading-search.cjs`、`reading-sources.cjs`、`reading-generate.cjs`、`reading-models.cjs` |
-| 翻译 | `translation-input.js`、`translation-service.cjs`、`translation-ui.js`、`translation-budget.cjs` |
-| 测试/依赖 | `check-*.cjs`、`test-reading-fixtures.cjs`、`package.json`、`package-lock.json` |
-| 规范 | `AGENTS.md`、只读 `translation_skill.md`、`reading-material-format.md` |
-| 历史设计（非当前配置） | `精选短文改造计划.md` |
-| 本地私有产物 | `input/`、`output/`、`.env`、用量/预算文件 |
+## 目录与接手入口
+
+根目录只保留日常入口、正式词库及项目配置；运行代码按模块归档，所有以下命令都在项目根目录执行。
+
+```text
+Translate-helper/
+├─ vocabulary.html / learned_words.json  # 原主页面与派生索引
+├─ 启动词库.cmd / README.md              # 日常入口
+├─ AGENTS.md / translation_skill.md      # 维护与词卡规范
+├─ server/                              # 本地服务、DeepSeek 客户端、根路径定位
+├─ modules/reading/                      # 阅读界面、资料解析、检索与生成
+├─ modules/translation/                  # 翻译界面、任务、校验与预算
+├─ tests/                               # 离线检查及隔离浏览器回归
+├─ tools/                               # 导入、迁移、单篇与付费验收工具
+├─ docs/                                # 现行说明；history/ 为历史设计
+├─ reading_materials/ / third_party/     # 阅读 Markdown 与第三方许可
+└─ input/ / output/ / archive/           # 本地私有材料、交付物与归档
+```
+
+`input/`、`output/`、`archive/` 不随仓库分发；干净克隆可能没有这些目录。`archive/` 保存本机 BERT 候选和历史验收报告，仍不参与运行。根目录中的 npm 清单、锁文件、`.env.example`、Git 规则与第三方说明继续保留；真实 `.env` 和私密账本的位置不变。
+
+目录整理不改变业务、许可或阅读上传白名单。`vocabulary.html` 不移动、不整页重建，以继续使用原 file 路径对应的浏览器学习记录；不要为整理目录另复制或改名主页面。`npm start`、`npm test` 与双击启动器的用法不变；显式脚本命令使用 `server/`、`tests/`、`tools/` 中的新路径。阅读格式见 [Markdown 规范](docs/reading-material-format.md)，历史设计见 [早期改造计划](docs/history/精选短文改造计划.md)，历史路径只供追溯。
 
 统一 npm 与 `package-lock.json`，不维护第二套锁文件。文本采用 UTF-8、Git 中 LF；Windows `.cmd` 保持 ASCII 与 CRLF；图片/PDF 按二进制处理。不要全仓格式化、整页重建 HTML、改测试基线掩盖差异，或以删词消除索引不一致。Agent 接手先完整阅读 [AGENTS.md](AGENTS.md) 与 [translation_skill.md](translation_skill.md)。
 
